@@ -377,7 +377,7 @@ public class PrometeoCarController : MonoBehaviour
       if(useUI){
           try{
             float absoluteCarSpeed = Mathf.Abs(carSpeed);
-            carSpeedText.text = Mathf.RoundToInt(absoluteCarSpeed).ToString() + " km/h";
+            carSpeedText.text = Mathf.RoundToInt(absoluteCarSpeed).ToString();
           }catch(Exception ex){
             Debug.LogWarning(ex);
           }
