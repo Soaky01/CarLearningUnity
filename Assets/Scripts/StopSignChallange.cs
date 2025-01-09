@@ -21,16 +21,17 @@ public class StopSignChallenge : MonoBehaviour
             {
                 stopTimer += Time.deltaTime;
                 isCarStopped = true;
-                // carRigidbody.isKinematic = true; // Freeze the car in place
+                carRigidbody.isKinematic = true; // Freeze the car in place
                 // Update feedback UI
-                feedbackText.text = "Stopping... " + Mathf.CeilToInt(requiredStopTime - stopTimer) + "s";
+                    feedbackText.text = "Stopping at stop signs prevents accidents and keeps everyone on the road safe. Safety starts with you.";
 
                 // Check if the required stop time is met
                 if (stopTimer >= requiredStopTime)
                 {
                     isChallangeDone = true;
-                    feedbackText.text = "Challenge Complete: Stop Sign Obeyed!";
-                    Debug.Log("Challenge Complete: Stop Sign Obeyed!");
+                    carRigidbody.isKinematic = false; // Freeze the car in place
+
+                    // Debug.Log("");
                 }
             }
             else
