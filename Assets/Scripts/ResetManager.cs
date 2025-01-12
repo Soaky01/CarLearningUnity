@@ -6,14 +6,18 @@ public static class ResetManager
 {
     public static StopSignChallenge stopSignChallenge; // Reference to StopSignChallenge
     public static CarStopZone carStopZone;             // Reference to CarStopZone
+    public static ObstacleChallenge obstacleChallenge; // Reference to ObstacleChallange
+    public static GameObject gameOverScreen;  // Reference to the Game Over Screen Canvas
+
 
     // Method to initialize challenge references
-    public static void InitializeChallenges(StopSignChallenge stopSign, CarStopZone carStop)
+    public static void InitializeChallenges(StopSignChallenge stopSign, CarStopZone carStop, ObstacleChallenge obstacleStop)
     {
         stopSignChallenge = stopSign;
         carStopZone = carStop;
+        obstacleChallenge = obstacleStop;
         Debug.Log("Challenges have been initialized in ResetManager.");
-    }
+    }   
 
     // Static method to reset the car
     public static void ResetCar(Rigidbody carRigidbody, Text feedbackText, string reason)
@@ -74,18 +78,45 @@ public static class ResetManager
             carRigidbody.isKinematic = false;
         }
     }
-
-    // Method to reset all challenges
-    public static void ResetAllChallenges()
+    public static void ResetAll()
     {
-        if (stopSignChallenge != null)
+        if (gameOverScreen != null)
+        {
+            gameOverScreen.SetActive(false);
+        }
+
+        if (GameManager.isStopSignChallengeCompleted != null)
         {
             stopSignChallenge.ResetChallengeState();
         }
 
-        if (carStopZone != null)
+        if (GameManager.isPedestrianChallengeCompleted != null)
         {
             carStopZone.ResetChallengeState();
+        }
+        
+        if (GameManager.isObstacleChallengeCompleted != null)
+        {
+            obstacleChallenge.ResetChallengeState();
+        }
+    }
+
+    // Method to reset all challenges
+    public static void ResetAllChallenges()
+    {
+        if (GameManager.isStopSignChallengeCompleted != null)
+        {
+            stopSignChallenge.ResetChallengeState();
+        }
+
+        if (GameManager.isPedestrianChallengeCompleted != null)
+        {
+            carStopZone.ResetChallengeState();
+        }
+        
+        if (GameManager.isObstacleChallengeCompleted != null)
+        {
+            obstacleChallenge.ResetChallengeState();
         }
     }
 }

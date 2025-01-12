@@ -5,7 +5,6 @@ public class CarStopZone : MonoBehaviour
 {
     private PedestrianCrossing pedestrian;      // Reference to the PedestrianCrossing script
     public Text feedbackText;                   // UI Text element for feedback
-    public bool isChallengeDone = false;       // To check if the challenge is done
     public Transform resetFlag;                 // Transform for the reset position and direction
     public float requiredStopTime = 5f;         // Time the car must stop
     public float stopTimer = 0f;               // Timer to track stop time
@@ -22,7 +21,7 @@ public class CarStopZone : MonoBehaviour
         if (pedestrianObject != null)
         {
             pedestrian = pedestrianObject.GetComponent<PedestrianCrossing>();
-
+            
             if (pedestrian == null)
             {
                 Debug.LogError("PedestrianCrossing script not found on GameObject with tag 'PedestrianTag'.");
@@ -33,24 +32,23 @@ public class CarStopZone : MonoBehaviour
             Debug.LogError("No GameObject with tag 'PedestrianTag' found in the scene.");
         }
 
-        ResetManager.InitializeChallenges(FindObjectOfType<StopSignChallenge>(), this);
+        ResetManager.InitializeChallenges(FindObjectOfType<StopSignChallenge>(), this, FindObjectOfType<ObstacleChallenge>());
     }
 
     public void ResetChallengeState()
     {
         GameObject pedestrianObject = GameObject.FindWithTag("PedestrianTag"); 
         pedestrian = pedestrianObject.GetComponent<PedestrianCrossing>();
-        isChallengeDone = false;
+        GameManager.isPedestrianChallengeCompleted = false;
         stopTimer = 0f;
         isCarStopped = false;
         pedestrian.ResetState();
         isInsideTrigger = false;
-        isChallengeDone = false;
     }
 
 
     void OnTriggerEnter(Collider other)
-    {
+    {  
         if (other.CompareTag("PlayerCar"))
         {
             // Assign Rigidbody and PrometeoCarController
@@ -74,8 +72,8 @@ public class CarStopZone : MonoBehaviour
         if (other.CompareTag("PlayerCar") && isInsideTrigger && carRigidbody != null && carController != null)
         {
             Debug.Log("first if");
-            Debug.Log(isChallengeDone); 
-            if (!isChallengeDone)
+            Debug.Log(GameManager.isPedestrianChallengeCompleted); 
+            if (!GameManager.isPedestrianChallengeCompleted)
             {
                 Debug.Log("second if");
                 // Timer logic when pedestrians are not crossing
@@ -100,7 +98,7 @@ public class CarStopZone : MonoBehaviour
                     // Check if the required stop time is met and pedestrian has crossed
                     if (stopTimer >= requiredStopTime && pedestrian != null && pedestrian.hasCrossed)
                     {
-                        isChallengeDone = true;
+                        GameManager.isPedestrianChallengeCompleted = true;
                         carRigidbody.isKinematic = false; // Allow the car to move
                         carController.enabled = true;     // Re-enable car controls
                         feedbackText.text = "";
@@ -121,7 +119,7 @@ public class CarStopZone : MonoBehaviour
     {
         if (other.CompareTag("PlayerCar"))
         {
-            if (isInsideTrigger && !isChallengeDone)
+            if (isInsideTrigger && !GameManager.isPedestrianChallengeCompleted)
             {
                 if (carRigidbody != null && carRigidbody.linearVelocity.magnitude > 0.1f)
                 {
@@ -129,7 +127,7 @@ public class CarStopZone : MonoBehaviour
                     ResetManager.ResetCar(carRigidbody, feedbackText, "You exited the crosswalk zone without completing the challenge. Please try again.");
                 }
             }
-            else if (isChallengeDone)
+            else if (GameManager.isPedestrianChallengeCompleted)
             {
                 feedbackText.text = "";
             }

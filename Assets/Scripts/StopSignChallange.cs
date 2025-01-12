@@ -7,7 +7,6 @@ public class StopSignChallenge : MonoBehaviour
     private float stopTimer = 0f;        // Timer to track stop time
     private bool isCarStopped = false;  // To check if the car is stopped
     public Text feedbackText;           // UI Text element for feedback
-    private bool isChallengeDone = false;
     private bool isInsideTrigger = false; // Track if the car is in the trigger
     private Rigidbody carRigidbody;       // Reference to the car's Rigidbody
 
@@ -16,7 +15,7 @@ public class StopSignChallenge : MonoBehaviour
     void Start()
     {
         // Register this challenge with ResetManager
-        ResetManager.InitializeChallenges(this, FindObjectOfType<CarStopZone>());
+        ResetManager.InitializeChallenges(this, FindObjectOfType<CarStopZone>(), FindObjectOfType<ObstacleChallenge>());
     }
 
     void OnTriggerEnter(Collider other)
@@ -38,7 +37,7 @@ public class StopSignChallenge : MonoBehaviour
 
     public void ResetChallengeState()
     {
-        isChallengeDone = false;
+        GameManager.isStopSignChallengeCompleted = false;
         stopTimer = 0f;
         isCarStopped = false;
     }
@@ -47,7 +46,7 @@ public class StopSignChallenge : MonoBehaviour
     {
         if (other.CompareTag("PlayerCar") && isInsideTrigger && carRigidbody != null)
         {
-            if (!isChallengeDone)
+            if (!GameManager.isStopSignChallengeCompleted)
             {
                 // Check if the car is stopped
                 if (carRigidbody.linearVelocity.magnitude < 0.1f)
@@ -61,7 +60,7 @@ public class StopSignChallenge : MonoBehaviour
                     // Check if the required stop time is met
                     if (stopTimer >= requiredStopTime)
                     {
-                        isChallengeDone = true;
+                        GameManager.isStopSignChallengeCompleted = true;
                         feedbackText.text = "Challenge Complete! You may proceed.";
                     }
                 }
@@ -81,7 +80,7 @@ public class StopSignChallenge : MonoBehaviour
         if (other.CompareTag("PlayerCar"))
         {
             // Ensure the car actually exited and wasn't stopping inside
-            if (isInsideTrigger && !isChallengeDone)
+            if (isInsideTrigger && !GameManager.isStopSignChallengeCompleted)
             {
                 if (carRigidbody != null && carRigidbody.linearVelocity.magnitude > 0.1f)
                 {
@@ -89,11 +88,10 @@ public class StopSignChallenge : MonoBehaviour
                     ResetManager.ResetCar(carRigidbody, feedbackText, "You exited the stop sign challenge area without stopping properly. Please try again.");
                 }
             }
-            else if (isChallengeDone)
+            else if (GameManager.isStopSignChallengeCompleted)
             {
                 feedbackText.text = "";
             }
-
                 // Mark as outside the trigger
                 isInsideTrigger = false;
         }

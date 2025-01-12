@@ -18,7 +18,7 @@ public class PedestrianCrossing : MonoBehaviour
 
     void Update()
     {
-        if (isCrossing)
+        if (isCrossing && !GameManager.isPedestrianChallengeCompleted)
         {
 
             // Move pedestrian from startPoint to endPoint
