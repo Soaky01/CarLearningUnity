@@ -14,7 +14,6 @@ public class ChallengeChecker : MonoBehaviour
         // Check if the car's speed exceeds the threshold
         if (carController != null && carController.carSpeed > speedThreshold)
         {
-
             // Prevent the car from moving
             carRigidbody = carController.GetComponent<Rigidbody>();
             ResetManager.ResetCar(carRigidbody, feedbackText, "Please do not exceed the speed limit of 50 km/h.");
